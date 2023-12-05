@@ -8,15 +8,25 @@ import { EmployeeShiftDetails } from "@/utilities/selectors";
 // ======================== Get All Shifts =========================
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = request.nextUrl;
+
+    const from_date = searchParams.get("from");
+    const to_date = searchParams.get("to");
+
     // Fetch logged in employee
     const loggedInEmployee = await getLoggedInEmployee(request);
 
     // If Employee is "HR" then show all shifts else show his own shifts
     const employeeShifts = await prisma.employeeShift.findMany({
-      where:
-        loggedInEmployee.department === "HR"
-          ? undefined
-          : { id: loggedInEmployee.id },
+      where: {
+        date: {
+          gte: from_date ? new Date(from_date) : undefined,
+          lte: to_date ? new Date(to_date) : undefined,
+        },
+        ...(loggedInEmployee.department === "HR"
+          ? {}
+          : { id: loggedInEmployee.id }),
+      },
       select: EmployeeShiftDetails,
     });
 
