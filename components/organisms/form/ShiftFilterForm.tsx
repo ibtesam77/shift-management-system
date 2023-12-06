@@ -3,8 +3,6 @@ import { Formik, Form } from "formik";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import axios from "axios";
-import Field from "@/components/molecules/form/Field";
 import SimpleButton from "@/components/molecules/button/Simple";
 import DatePicker from "@/components/molecules/form/DatePicker";
 
@@ -22,8 +20,8 @@ const ShiftFilterForm = () => {
   const to = searchParams.get("to");
 
   const initialValues: ShiftFilterFormValues = {
-    from: from || "2023-12-01",
-    to: to || "2023-12-04",
+    from: from || "",
+    to: to || "",
   };
 
   const createQueryString = useCallback(
