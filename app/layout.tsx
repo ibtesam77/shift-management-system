@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ToastContainer, toast } from "react-toastify";
+import { ThemeModeScript, Flowbite } from "flowbite-react";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
@@ -18,9 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <ThemeModeScript />
+      </head>
       <body className={inter.className}>
         <ToastContainer />
-        {children}
+        <Flowbite theme={{ mode: "light" }}>{children}</Flowbite>
       </body>
     </html>
   );

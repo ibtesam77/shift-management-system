@@ -13,7 +13,7 @@ export default function PublicLayout({
 
   if (isLoading) return <FullScreenLoader />;
 
-  if (isAuthenticated) return redirect("/dashboard");
+  if (isAuthenticated) return redirect("/shifts");
 
   return children;
 }

@@ -1,21 +1,25 @@
 import { Formik, Form } from "formik";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import axios from "axios";
 import Field from "@/components/molecules/form/Field";
 import SimpleButton from "@/components/molecules/button/Simple";
+import { EmployeeShiftDetails } from "@/types/shift";
 
-interface LoginFormValues {
-  email: string;
-  password: string;
+interface EmailFormProps {
+  shifts: EmployeeShiftDetails[];
+  onClose: () => void;
 }
 
-const LoginForm = () => {
-  const router = useRouter();
-  const initialValues: LoginFormValues = {
-    email: "test@gmail.com",
-    password: "test@1122",
+interface EmailFormValues {
+  email: string;
+}
+
+const EmailForm = (props: EmailFormProps) => {
+  const { shifts, onClose } = props;
+
+  const initialValues: EmailFormValues = {
+    email: "",
   };
 
   return (
@@ -23,14 +27,19 @@ const LoginForm = () => {
       initialValues={initialValues}
       validationSchema={Yup.object().shape({
         email: Yup.string().email("Invalid Email").required("Required"),
-        password: Yup.string().required("Required"),
       })}
       onSubmit={async (values, { setSubmitting }) => {
         try {
-          await axios.post("/api/auth/login", values);
-          router.replace("/shifts");
+          await axios.post("/api/shifts/report/send", {
+            ...values,
+            shifts: shifts.map((shift) => shift.id),
+          });
+          toast.success("Email sent successfully");
+          onClose();
         } catch (error: any) {
-          toast.error("Invalid Credentials");
+          toast.error(
+            error.message || "Something went wrong in sending shifts report"
+          );
         } finally {
           setSubmitting(false);
         }
@@ -38,10 +47,9 @@ const LoginForm = () => {
     >
       {({ isSubmitting }) => (
         <Form className="flex flex-col gap-4">
-          <Field type="email" name="email" label="Email Address" />
-          <Field type="password" name="password" label="Password" />
+          <Field name="email" autoComplete="email" label="Email Address" />
           <SimpleButton type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "Sending Report ..." : "Send Report"}
           </SimpleButton>
         </Form>
       )}
@@ -49,4 +57,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default EmailForm;

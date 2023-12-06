@@ -1,37 +1,27 @@
-import { Field as FormikField } from "formik";
-import { twMerge } from "tailwind-merge";
+import { Label, TextInput, TextInputProps } from "flowbite-react";
+import { useField } from "formik";
 
-interface FieldProps
-  extends React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {
+interface FieldProps extends TextInputProps {
   label: string;
+  name: string;
   labelClassname?: string;
 }
 
 const Field = (props: FieldProps) => {
-  const { label, labelClassname, name, className = "", ...inputProps } = props;
+  const { label, labelClassname, name, ...inputProps } = props;
+
+  const [field, meta] = useField(name);
 
   return (
     <div>
-      <label
-        htmlFor="email"
-        className={twMerge(
-          "block text-sm font-medium leading-6 text-gray-900",
-          labelClassname
-        )}
-      >
-        {label}
-      </label>
-      <FormikField
+      <Label color="gray" htmlFor={name} value={label} />
+      <TextInput
         {...inputProps}
+        {...field}
         id={name}
         name={name}
-        className={twMerge(
-          "block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-          className
-        )}
+        color={meta.touched && meta.error ? "failure" : "gray"}
+        helperText={<span>{meta.error}</span>}
       />
     </div>
   );
